@@ -49,7 +49,7 @@ class City(Base):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4) 
 
 def get_session():
-    engine = create_engine('sqlite://///Users/rajacsp/projects/flask-rest-city-crud-sqlalchemy-sqlite/test.db')
+    engine = create_engine('sqlite:///test.db')
     Base.metadata.bind = engine
     
     DBSession = sessionmaker()
