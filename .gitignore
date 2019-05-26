@@ -60,7 +60,7 @@ docs/_build/
 # PyBuilder
 target/
 
-*.db
+#*.db
 
 .vscode/
 
