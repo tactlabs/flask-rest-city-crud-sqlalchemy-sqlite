@@ -40,7 +40,6 @@ class City(Base):
     rowid = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=True)
     state = Column(String(250), nullable=True)
-    country = Column(String(250), nullable=True)
     
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -50,7 +49,7 @@ class City(Base):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4) 
 
 def get_session():
-    engine = create_engine('sqlite:////Users/rajacsp/sqlite_store/test.db')
+    engine = create_engine('sqlite://///Users/rajacsp/projects/flask-rest-city-crud-sqlalchemy-sqlite/test.db')
     Base.metadata.bind = engine
     
     DBSession = sessionmaker()
@@ -71,7 +70,7 @@ def get_all_cities():
 
     city_new_list = []
     for city in city_list:
-        content = ''+str(city.id)+' - '+str(city.name)+' - '+str(city.state)+' - '+str(city.country)
+        content = ''+str(city.rowid)+' - '+str(city.name)+' - '+str(city.state)
         
         #print(type(city))
         #print(city.as_dict())
@@ -92,21 +91,20 @@ def get_all_cities():
 '''
     /city/add
     http://127.0.0.1:5000/city/add
-    http://127.0.0.1:5000/city/add?name=Theni&state=TA&country=India
+    http://127.0.0.1:5000/city/add?name=Theni&state=TA
 '''
 @api.route('/city/add')
 def add_city():
     
     name = request.args.get('name')
     state = request.args.get('state')
-    country = request.args.get('country')
     
     session = get_session()
-    new_city = City(name = name, state = state, country = country)
+    new_city = City(name = name, state = state)
     session.add(new_city)
     session.commit()
     
-    print('city['+name+' - '+state+' - '+country+'] added')
+    print('city['+name+' - '+state+' - ] added')
     
     result_json = {
         'result': 'ok',
@@ -119,7 +117,7 @@ def add_city():
 '''
     /city/update
     http://127.0.0.1:5000/city/update
-    http://127.0.0.1:5000/city/update?name=Toronto&state=ON&country=Canada&id=8
+    http://127.0.0.1:5000/city/update?name=Toronto&state=ON&id=8
 '''
 @api.route('/city/update')    
 def update_city():
@@ -127,13 +125,12 @@ def update_city():
     id = request.args.get('id', type=int)
     name = request.args.get('name')
     state = request.args.get('state')
-    country = request.args.get('country')
     
     session = get_session()
-    session.query(City).filter(City.id == id).update({City.name: name, City.state : state, City.country : country}, synchronize_session=False)
+    session.query(City).filter(City.rowid == id).update({City.name: name, City.state : state}, synchronize_session=False)
     session.commit()
     
-    print('city['+name+' - '+state+' - '+country+'] updated')
+    print('city['+name+' - '+state+' - ] updated')
     
     print(ResultProxy.rowcount)
     
@@ -164,7 +161,7 @@ def update_city():
 def delete_city(id):
     
     session = get_session()
-    session.query(City).filter(City.id == id).delete(synchronize_session = False)
+    session.query(City).filter(City.rowid == id).delete(synchronize_session = False)
     session.commit()
     
     print('city['+str(id)+'] deleted')   
