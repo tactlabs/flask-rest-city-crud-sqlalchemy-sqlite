@@ -1,5 +1,7 @@
 '''
-    Notest:
+    Notes:
+
+    https://stackoverflow.com/questions/3659142/bulk-insert-with-sqlalchemy-orm
 '''
 
 from flask import Flask

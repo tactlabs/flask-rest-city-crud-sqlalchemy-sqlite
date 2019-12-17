@@ -113,6 +113,35 @@ def add_city():
     }
     
     return success_json(result_json)
+
+
+'''
+    /city/add/multi
+    http://127.0.0.1:5000/city/add/multi
+    http://127.0.0.1:5000/city/add/multi
+'''
+@api.route('/city/add/multi')
+def add_cities():
+    
+    state = "TA"
+    
+    session = get_session()
+
+    objects = [
+        City(name="one", state=state),
+        City(name="two", state=state),
+        City(name="three", state=state),
+    ]
+    session.bulk_save_objects(objects)
+    session.commit()
+    
+    result_json = {
+        'result': 'ok',
+        
+        'api_error': 0
+    }
+    
+    return success_json(result_json)
     
 '''
     /city/update
